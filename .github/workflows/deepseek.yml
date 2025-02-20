@@ -1,0 +1,47 @@
+name: DeepSeek Code Review
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [ opened, synchronize ]
+
+env:
+  DEEPSEEK_API_KEY: sk-3ea28414312742b88e0500faa14a3d69
+  GITHUB_TOKEN: A1f51545005214ac8ad2cfcab9a1e2097
+
+jobs:
+  deepseek-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # 根据你的项目需求选择Python版本
+
+      - name: Install DeepSeek CLI
+        run: |
+          pip install deepseek-cli
+
+      - name: Run DeepSeek Code Review
+        run: |
+          deepseek review --api-key $DEEPSEEK_API_KEY .
+
+      - name: Post results to PR
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+        run: |
+          # 获取当前Pull Request的信息（如果在Pull Request中）
+          if [ "${GITHUB_REF}" == "refs/pull/*" ]; then
+            PR_NUMBER=${GITHUB_REF##refs/pull/}
+            gh pr view $PR_NUMBER --json | jq -r '.[].body' > pr_body.md
+
+            # 添加DeepSeek检查结果到评论
+            echo "### DeepSeek Code Review Results\n```$(cat deepseek-report.json)```" >> pr_body.md
+            gh pr comment $PR_NUMBER --body-file pr_body.md
+          fi

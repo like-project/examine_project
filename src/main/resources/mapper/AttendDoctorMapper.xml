@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goodwill.examine.mapper.AttendDoctorMapper">
+    <insert id="insert" parameterType="com.goodwill.examine.entity.AttendDoctor">
+        INSERT INTO attend_doctor (doctor_id, doctor_name, depart_meeting_id, create_time, update_time)
+        VALUES (#{doctorId}, #{doctorName}, #{departMeetingId}, #{createTime}, #{updateTime})
+    </insert>
+    <select id="selectById" parameterType="int" resultType="com.goodwill.examine.entity.AttendDoctor">
+        SELECT * FROM attend_doctor WHERE id = #{id}
+    </select>
+    <update id="update" parameterType="com.goodwill.examine.entity.AttendDoctor">
+        UPDATE attend_doctor
+        SET doctor_id = #{doctorId}, doctor_name = #{doctorName}, depart_meeting_id = #{departMeetingId}, update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM attend_doctor WHERE id = #{id}
+    </delete>
+</mapper>
