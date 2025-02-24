@@ -35,6 +35,11 @@ public class DepartMeetingController {
     return Result.success();
   }
 
+  @GetMapping(value = "/get")
+  public Result<Object> getDepartMeeting() {
+    // 调用服务层执行部门会议添加操作
+    return Result.success();
+  }
 
 
 
