@@ -2,7 +2,7 @@ name: DeepSeek Code Review
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
     types: [ opened, synchronize ]
 
