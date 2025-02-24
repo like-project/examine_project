@@ -32,7 +32,7 @@ jobs:
 
       - name: Run DeepSeek Code Review
         run: |
-          deepseek review --api-key $DEEPSEEK_API_KEY --non-interactive .
+          echo "" | deepseek review --api-key $DEEPSEEK_API_KEY .
 
       - name: Checkout repository again (for PR info)
         uses: actions/checkout@v2
