@@ -49,5 +49,12 @@ public class DepartMeetingController {
     return Result.success();
   }
 
+  @DeleteMapping(value = "/delete")
+  public Result<Object> deleteDepartMeeting(@RequestBody DepartMeetingDTO departMeetingDTO) {
+    // 调用服务层执行部门会议添加操作
+    departMeetingService.addDepartMeeting(departMeetingDTO);
+    return Result.success();
+  }
+
 
 }
