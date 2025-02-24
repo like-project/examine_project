@@ -7,9 +7,8 @@ on:
     types: [ opened, synchronize ]
 
 env:
-  DEEPSEEK_API_KEY: ${{ sk-3ea28414312742b88e0500faa14a3d69 }}
-  GITHUB_TOKEN:  ${{ ANKIV56A5IRNY2OVCZWNVHLHW4EHM }}
-
+  DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   deepseek-review:
@@ -31,18 +30,24 @@ jobs:
         run: |
           deepseek review --api-key $DEEPSEEK_API_KEY .
 
-      - name: Post results to PR
+      - name: Checkout repository again (for PR info)
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
+      - name: Install GitHub CLI and jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh jq
+
+      - name: Post results to PR
         run: |
           # 获取当前Pull Request的信息（如果在Pull Request中）
-          if [ "${GITHUB_REF}" == "refs/pull/*" ]; then
-            PR_NUMBER=${GITHUB_REF##refs/pull/}
-            gh pr view $PR_NUMBER --json | jq -r '.[].body' > pr_body.md
+          if [[ $GITHUB_REF == refs/pull/* ]]; then
+            PR_NUMBER=$(echo $GITHUB_REF | cut -d'/' -f 3)
+            gh pr view $PR_NUMBER --json body | jq -r '.body' > pr_body.md
 
             # 添加DeepSeek检查结果到评论
-            echo "### DeepSeek Code Review Results\n```$(cat deepseek-report.json)```" >> pr_body.md
+            echo "### DeepSeek Code Review Results\n\`\`\`$(cat deepseek-report.json)\`\`\`" >> pr_body.md
             gh pr comment $PR_NUMBER --body-file pr_body.md
           fi
