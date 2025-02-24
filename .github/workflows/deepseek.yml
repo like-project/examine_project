@@ -2,14 +2,13 @@ name: DeepSeek Code Review
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
     types: [ opened, synchronize ]
 
 env:
   DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-  GITHUB_TOKEN: ${{ secrets.CE }}
-
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   deepseek-review:
@@ -21,7 +20,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # 根据你的项目需求选择Python版本
+          python-version: '3.12.7'  # 根据你的项目需求选择Python版本
+
+      - name: Install or update setuptools
+        run: |
+          pip install --upgrade setuptools
 
       - name: Install DeepSeek CLI
         run: |
